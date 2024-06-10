@@ -23,6 +23,8 @@ class Title extends Phaser.Scene {
 
     create() {
 
+        this.transition = false;
+
         // map setup
         this.map = this.add.tilemap("tiled-title", 64, 64, 80, 22);
         this.tileset = this.map.addTilesetImage("tilesheet_complete", "tilemap_tiles");
@@ -63,19 +65,9 @@ class Title extends Phaser.Scene {
 
         // set up Phaser-provided cursor key input
         cursors = this.input.keyboard.createCursorKeys();
-        this.rKey = this.input.keyboard.addKey('R');
+        this.spaceKey = this.input.keyboard.addKey('SPACE');
 
         // vfx setup
-        my.vfx.walking = this.add.particles(0, 0, "kenny-particles", {
-            frame: ['circle_05.png'],
-            scale: {start: 0.03, end: 0.3},
-            lifespan: 350,
-            gravityY: -800,
-            frequency: 100,
-            alpha: {start: 1, end: 0.1}, 
-        });
-        my.vfx.walking.stop();
-
         my.vfx.jump = this.add.particles(0, 0, "kenny-particles", {
             frame: ['circle_02.png'],
             scale: {start: 0.03, end: 0.5},
@@ -97,19 +89,22 @@ class Title extends Phaser.Scene {
         });
 
         this.add.text(my.sprite.player.x, my.sprite.player.y - 200, "Spikes are Ouch", {fontSize: '64px'}).setOrigin(0.5);
+        this.add.text(my.sprite.player.x, my.sprite.player.y - 140, "CMPM 120 Game", {fontSize: '32px'}).setOrigin(0.5);
         this.add.text(my.sprite.player.x, my.sprite.player.y + 130, "Marcus Ochoa", {fontSize: '48px'}).setOrigin(0.5);
-        this.add.text(my.sprite.player.x, my.sprite.player.y + 300, "CMPM120", {fontSize: '48px'}).setOrigin(0.5);
+        this.add.text(my.sprite.player.x, my.sprite.player.y + 275, "Use Arrow Keys to Control", {fontSize: '36px'}).setOrigin(0.5);
+        this.add.text(my.sprite.player.x, my.sprite.player.y + 320, "Press [SPACE] to start", {fontSize: '30px'}).setOrigin(0.5);
     }
 
     update() {
 
-        if (this.rKey.isDown) {
+        if (this.spaceKey.isDown && !this.transition) {
             my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
             my.vfx.jump.setParticleSpeed(0, this.PARTICLE_VELOCITY);
             my.vfx.jump.setPosition(my.sprite.player.x, my.sprite.player.y+30);
             my.vfx.jump.start();
             this.sound.play("jump_sound");
             this.cameras.main.fadeOut(2000);
+            this.transition = true;
         }
     }
 }
