@@ -45,6 +45,8 @@ class Title extends Phaser.Scene {
 
         this.animatedTiles.init(this.map);
 
+
+        // coin setup (just for visuals)
         this.coins = this.map.createFromObjects("Objects", {
             name: "coin",
             key: "tilemap_sheet",
@@ -97,6 +99,7 @@ class Title extends Phaser.Scene {
 
     update() {
 
+        // trigger to move to next scene
         if (this.spaceKey.isDown && !this.transition) {
             my.sprite.player.body.setVelocityY(this.JUMP_VELOCITY);
             my.vfx.jump.setParticleSpeed(0, this.PARTICLE_VELOCITY);

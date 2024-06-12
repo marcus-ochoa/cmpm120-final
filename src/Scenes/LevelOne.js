@@ -245,6 +245,8 @@ class LevelOne extends Phaser.Scene {
         });
     }
 
+    // ENDSTATE FUNCTIONS
+
     death(death_message, death_sprite) {
         
         my.sprite.player.death();
@@ -273,7 +275,11 @@ class LevelOne extends Phaser.Scene {
         this.physics.world.pause();
     }
 
+    // UPDATE FUNCTION
+
     update() {
+
+        // normal update updates all enemies and platforms along with player
         
         if (!this.gameover) {
 
@@ -288,6 +294,8 @@ class LevelOne extends Phaser.Scene {
         }
 
         else {
+
+            // on endstate, wait for trigger to next level
 
             if (this.spaceKey.isDown && !this.transition) {
 

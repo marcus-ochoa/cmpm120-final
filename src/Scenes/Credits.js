@@ -26,6 +26,7 @@ class Credits extends Phaser.Scene {
              this.scene.start("titleScene");
         });
 
+        // credits text
         this.add.text(this.centerX, this.centerY - 300, "Credits", {fontSize: '64px'}).setOrigin(0.5);
         this.add.text(this.centerX, this.centerY - 160, "Kenney Assets (Sound, Art)", {fontSize: '32px'}).setOrigin(0.5);
         this.add.text(this.centerX, this.centerY - 100, "Marcus Ochoa", {fontSize: '32px'}).setOrigin(0.5);
@@ -34,6 +35,8 @@ class Credits extends Phaser.Scene {
     }
 
     update() {
+
+        // trigger to return to title
 
         if (this.spaceKey.isDown && !this.transition) {
             this.cameras.main.fadeOut(2000);

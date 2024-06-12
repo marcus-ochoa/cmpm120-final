@@ -5,6 +5,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         super(scene, x, y, texture, frame);
         scene.add.existing(this);
 
+        // SETUP MOVEMENT RANGE
+
         this.distance = distance;
 
         this.forward = true;
@@ -18,6 +20,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.end = this.start;
             this.start = this.start + distance;
         }
+
+        // ADD VFX
 
         this.walkingVfx = scene.add.particles(0, 0, "kenny-particles", {
             frame: ['circle_05.png'],
@@ -44,6 +48,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         return this;
     }
 
+    // VARIABLE INITIALIZATION
+
     init() {
 
         this.ACCELERATION = 2000;
@@ -58,6 +64,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     }
 
+    // DEATH FUNCTION
+
     death() {
         this.visible = false;
         this.sound.play("enemy_sound");
@@ -66,6 +74,9 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.walkingVfx.stop();
         this.destroy();
     }
+
+
+    // UPDATE LOOP: moves back and forth in given range
 
     update() {
 

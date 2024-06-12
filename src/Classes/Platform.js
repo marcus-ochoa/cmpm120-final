@@ -7,6 +7,8 @@ class Platform extends Phaser.GameObjects.Image {
         super(scene, 0, 0, "tilemap_sheet", 8);
         scene.add.existing(this);
 
+        // SETUP MOVEMENT RANGE
+
         this.vertical = vertical;
         this.forward = true;
 
@@ -56,6 +58,8 @@ class Platform extends Phaser.GameObjects.Image {
 
         return this;
     }
+
+    // MOVEMENT UPDATE: moves back and forth within given range
 
     update() {
 

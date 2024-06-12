@@ -21,7 +21,6 @@ class Load extends Phaser.Scene {
 
         // load characters spritesheet
         this.load.atlas("characters_sheet", "player/character-texture.png", "player/character-texture.json");
-
         this.load.atlas("enemy_sheet", "enemy/enemy-texture.png", "enemy/enemy-texture.json");
 
         // load particles

@@ -38,8 +38,6 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.sound = scene.sound;
 
         return this;
-
-        
     }
 
     init() {
@@ -56,6 +54,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
     }
 
+    // ENDSTATE FUNCTIONS
+
     exit() {
 
         this.visible = false;
@@ -70,6 +70,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.deathVfx.start();
         this.walkingVfx.stop();     
     }
+
+    // MOVEMENT UPDATE (left / right / jump)
 
     update() {
 
