@@ -38,17 +38,15 @@ class Platform extends Phaser.GameObjects.Image {
 
         if (vertical) {
             
-            this.start = this.partsArray[0].y;
-            
             for (let platform of this.partsArray) {
+
+                console.log(this.platformVelocity);
                 
                 platform.setVelocityY(this.platformVelocity);
             }
         }
 
         else {
-            
-            this.start = this.partsArray[0].x;
             
             for (let platform of this.partsArray) {
                 

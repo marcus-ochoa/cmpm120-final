@@ -16,7 +16,7 @@ let config = {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true,
+            // debug: true,
             gravity: {
                 x: 0,
                 y: 0
@@ -25,7 +25,7 @@ let config = {
     },
     width: 700,
     height: 704,
-    scene: [Load, Title, LevelOne]
+    scene: [Load, Title, Credits, LevelOne, LevelTwo]
 }
 
 var cursors;

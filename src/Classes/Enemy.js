@@ -34,7 +34,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
             scale: {start: 0.03, end: 0.5},
             lifespan: 350,
             gravityY: -1000,
-            alpha: {start: 1, end: 0.1}, 
+            alpha: {start: 1, end: 0.1},
+            duration: 5,
         });
         this.deathVfx.stop();
 
@@ -57,15 +58,11 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     }
 
-    end() {
-
-        this.velocity = 0;
-    }
-
     death() {
         this.visible = false;
+        this.sound.play("enemy_sound");
         this.deathVfx.setPosition(this.x, this.y-50);
-        //this.deathVfx.start();
+        this.deathVfx.start();
         this.walkingVfx.stop();
         this.destroy();
     }

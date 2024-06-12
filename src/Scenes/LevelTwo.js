@@ -1,6 +1,6 @@
-class LevelOne extends Phaser.Scene {
+class LevelTwo extends Phaser.Scene {
     constructor() {
-        super("levelOneScene");
+        super("levelTwoScene");
     }
 
     init() {
@@ -31,7 +31,7 @@ class LevelOne extends Phaser.Scene {
         this.coins_taken = 0;
 
         // map setup
-        this.map = this.add.tilemap("tiled-level-1", 64, 64, 80, 22);
+        this.map = this.add.tilemap("tiled-level-2", 64, 64, 80, 22);
         this.tileset = this.map.addTilesetImage("tilesheet_complete", "tilemap_tiles");
         this.physics.world.setBounds(0,0,this.map.widthInPixels,this.map.heightInPixels);
         this.physics.world.TILE_BIAS = 24;
@@ -127,8 +127,8 @@ class LevelOne extends Phaser.Scene {
 
         // ENEMY SETUP
         this.enemy_list = [
-            [400, 500, 200],
-            [1000, 500, 200],
+            [3975, 600, 300],
+            [1670, 500, 300],
         ];
 
         this.enemies = new Phaser.GameObjects.Group(this, Enemy);
@@ -237,7 +237,7 @@ class LevelOne extends Phaser.Scene {
 
         this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, ()=> {
             if (this.win) {
-                this.scene.start("levelTwoScene");
+                this.scene.start("creditsScene");
             } 
             else {
                 this.scene.restart();
@@ -257,8 +257,8 @@ class LevelOne extends Phaser.Scene {
     completed() {
 
         my.sprite.player.exit();
-        this.add.text(my.sprite.player.x, my.sprite.player.y - 250, this.coins_taken + "/5 Coins", {fontSize: '28px'}).setOrigin(0.5);
-        this.add.text(my.sprite.player.x, my.sprite.player.y - 200, "Wow you made it!", {fontSize: '56px'}).setOrigin(0.5);
+        this.add.text(my.sprite.player.x, my.sprite.player.y + 250, this.coins_taken + "/5 Coins", {fontSize: '28px'}).setOrigin(0.5);
+        this.add.text(my.sprite.player.x, my.sprite.player.y + 200, "Wow you made it!", {fontSize: '56px'}).setOrigin(0.5);
         this.win = true;
         this.endgame();
     }

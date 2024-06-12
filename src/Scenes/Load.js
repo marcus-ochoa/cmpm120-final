@@ -32,6 +32,8 @@ class Load extends Phaser.Scene {
         this.load.audio("coin_sound", "audio/powerUp9.ogg");
         this.load.audio("key_sound", "audio/powerUp11.ogg");
         this.load.audio("fail_sound", "audio/phaserDown3.ogg");
+        this.load.audio("enemy_sound", "audio/lowRandom.ogg");
+        this.load.audio("switch_sound", "audio/pepSound2.ogg");
         
     }
 
