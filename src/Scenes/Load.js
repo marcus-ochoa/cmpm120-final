@@ -22,6 +22,8 @@ class Load extends Phaser.Scene {
         // load characters spritesheet
         this.load.atlas("characters_sheet", "player/character-texture.png", "player/character-texture.json");
 
+        this.load.atlas("enemy_sheet", "enemy/enemy-texture.png", "enemy/enemy-texture.json");
+
         // load particles
         this.load.multiatlas("kenny-particles", "particles/kenny-particles.json");
 
@@ -84,6 +86,17 @@ class Load extends Phaser.Scene {
                 { frame: 79 }
             ],
             frameRate: 2,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'enemy_walk',
+            defaultTextureKey: "enemy_sheet",
+            frames: [
+                { frame: "enemyWalking_2.png" },
+                { frame: "enemyWalking_1.png" }
+            ],
+            frameRate: 6,
             repeat: -1
         });
 

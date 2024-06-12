@@ -24,6 +24,7 @@ class LevelOne extends Phaser.Scene {
     create() {
 
         this.gameover = false;
+        this.win = false;
         this.hasKey = false;
         this.coins_taken = 0;
 
@@ -34,7 +35,7 @@ class LevelOne extends Phaser.Scene {
         this.physics.world.TILE_BIAS = 24;
 
         // layers setup
-        this.map.createLayer("Background", this.tileset, -200, -200).setScrollFactor(0.5);
+        this.map.createLayer("Background", this.tileset, -200, -200).setScrollFactor(0.5).setAlpha(0.5);
         this.map.createLayer("Landscape", this.tileset, -100, -100).setScrollFactor(0.75);
         this.groundLayer = this.map.createLayer("Ground", this.tileset, 0, 0);
         this.spikeLayer = this.map.createLayer("Spikes", this.tileset, 0, 0);
@@ -53,6 +54,39 @@ class LevelOne extends Phaser.Scene {
         my.sprite.player = new Player(this, 100, 500, "characters_sheet", "playerRed_stand.png");
         this.physics.world.enable(my.sprite.player, Phaser.Physics.Arcade.DYNAMIC_BODY);
         my.sprite.player.init();
+
+        this.enemy_list = [
+            [400, 500, 200],
+            [1000, 500, 200],
+        ];
+
+        this.enemies = new Phaser.GameObjects.Group(this, Enemy);
+        this.enemies.runChildUpdate = true;
+
+        for (let enemy_info of this.enemy_list) {
+
+            let enemy = new Enemy(this, enemy_info[0], enemy_info[1], "enemy_sheet", "enemyWalking_1.png", enemy_info[2]);
+            this.physics.world.enable(enemy, Phaser.Physics.Arcade.DYNAMIC_BODY);
+            enemy.init();
+            this.enemies.add(enemy);
+            this.physics.add.collider(enemy, this.groundLayer);
+        }
+
+        this.physics.add.collider(my.sprite.player, this.enemies, (obj1, obj2) => {
+            
+            if (!this.gameover) {
+
+                if (obj2.body.touching.left || obj2.body.touching.right) {
+                    this.death("Get Enemied!", "playerRed_dead.png");
+                    obj2.velocity = 0;
+                    this.physics.world.update();
+                }
+                else {
+                    this.enemies = this.enemies.remove(obj2);
+                    obj2.death();
+                }
+            }   
+        });
 
         // initializing coin group from tiled
         this.coins = this.map.createFromObjects("Objects", {
@@ -98,7 +132,7 @@ class LevelOne extends Phaser.Scene {
                 if (prop.name == "distance") {
                     distance = prop.value;
                 }
-                
+
                 if (prop.name == "vertical") {
                     vertical = prop.value;
                 }
@@ -107,20 +141,7 @@ class LevelOne extends Phaser.Scene {
             this.platforms.push(new Platform(this, partImages, distance, vertical));
         }
 
-        // this.physics.world.enable(this.platforms, Phaser.Physics.Arcade.DYNAMIC_BODY);
-        // this.platformGroup = this.add.group(this.platforms);
-        // this.platformVelocity = 75;
-        // Phaser.Actions.Call(this.platformGroup.getChildren(), function(sprite) {
-        //     sprite.setImmovable(true);
-        //     sprite.body.allowGravity = false;
-        //     sprite.setVelocityX(this.platformVelocity);
-            
-        // }, this);
-        // this.platformCounter = 0;
-
         this.animatedTiles.init(this.map);
-
-        
 
         // add colliders for level elements
         this.physics.add.collider(my.sprite.player, this.groundLayer);
@@ -139,21 +160,12 @@ class LevelOne extends Phaser.Scene {
             this.hasKey = true;
         });
 
-
-
         // spike end state
         this.physics.add.collider(my.sprite.player, this.spikeLayer, () => {
 
             if(!this.gameover) {
-                this.cameras.main.stopFollow();
-                this.cameras.main.zoomTo(this.ZOOM_SCALE, 1000);
-                this.cameras.main.pan(my.sprite.player.x, my.sprite.player.y, 1000);
-                my.sprite.player.death();
-                this.add.text(my.sprite.player.x, my.sprite.player.y - 100, "Get Spiked!", {fontSize: '64px'}).setOrigin(0.5);
-                this.add.text(my.sprite.player.x, my.sprite.player.y + 100, "(Press 'R' to restart)", {fontSize: '32px'}).setOrigin(0.5);
-                this.gameover = true;
-                this.add.sprite(my.sprite.player.x, my.sprite.player.y, "characters_sheet", "playerRed_dead.png").setScale(1.5);
-                this.sound.play("fail_sound");
+                
+                this.death("Get Spiked!", "playerRed_dead.png");
             }
             
         });
@@ -162,27 +174,11 @@ class LevelOne extends Phaser.Scene {
         this.physics.add.collider(my.sprite.player, this.doorLayer, () => {
 
             if(!this.gameover && this.hasKey) {
-                this.cameras.main.stopFollow();
-                this.cameras.main.zoomTo(this.ZOOM_SCALE, 1000);
-                this.cameras.main.pan(my.sprite.player.x, my.sprite.player.y, 1000);
-                my.sprite.player.exit();
-                this.add.text(my.sprite.player.x, my.sprite.player.y - 250, this.coins_taken + "/5 Coins", {fontSize: '28px'}).setOrigin(0.5);
-                this.add.text(my.sprite.player.x, my.sprite.player.y - 200, "Wow you made it!", {fontSize: '56px'}).setOrigin(0.5);
-                this.add.text(my.sprite.player.x, my.sprite.player.y - 125, "(Press 'R' to restart)", {fontSize: '32px'}).setOrigin(0.5);
-                this.gameover = true;
-                this.cameras.main.stopFollow();
+                this.win();
             }
 
             if(!this.gameover && (!this.hasKey)) {
-                this.cameras.main.stopFollow();
-                this.cameras.main.zoomTo(this.ZOOM_SCALE, 1000);
-                this.cameras.main.pan(my.sprite.player.x, my.sprite.player.y, 1000);
-                my.sprite.player.death();
-                this.add.text(my.sprite.player.x, my.sprite.player.y - 200, "Forgot the key!", {fontSize: '64px'}).setOrigin(0.5);
-                this.add.text(my.sprite.player.x, my.sprite.player.y - 125, "(Press 'R' to restart)", {fontSize: '32px'}).setOrigin(0.5);
-                this.gameover = true;
-                this.add.sprite(my.sprite.player.x, my.sprite.player.y, "characters_sheet", "playerRed_hit.png").setScale(1.5);
-                this.sound.play("fail_sound");
+                this.death("Forgot the key!", "playerRed_hit.png");
             }
             
         });
@@ -196,6 +192,34 @@ class LevelOne extends Phaser.Scene {
 
     }
 
+    death(death_message, death_sprite) {
+        
+        my.sprite.player.death();
+        this.add.text(my.sprite.player.x, my.sprite.player.y - 180, death_message, {fontSize: '64px'}).setOrigin(0.5);
+        this.add.sprite(my.sprite.player.x, my.sprite.player.y, "characters_sheet", death_sprite).setScale(1.5);
+        this.sound.play("fail_sound");
+        this.endgame();
+    }
+
+    win() {
+
+        my.sprite.player.exit();
+        this.add.text(my.sprite.player.x, my.sprite.player.y - 250, this.coins_taken + "/5 Coins", {fontSize: '28px'}).setOrigin(0.5);
+        this.add.text(my.sprite.player.x, my.sprite.player.y - 200, "Wow you made it!", {fontSize: '56px'}).setOrigin(0.5);
+        this.win = true;
+        this.endgame();
+    }
+
+    endgame() {
+
+        this.add.text(my.sprite.player.x, my.sprite.player.y - 100, "(Press 'R' to restart)", {fontSize: '32px'}).setOrigin(0.5);
+        this.cameras.main.stopFollow();
+        this.cameras.main.zoomTo(this.ZOOM_SCALE, 1000);
+        this.cameras.main.pan(my.sprite.player.x, my.sprite.player.y, 1000);
+        this.gameover = true;
+        this.physics.world.pause();
+    }
+
     update() {
         
         if (!this.gameover) {
@@ -206,15 +230,21 @@ class LevelOne extends Phaser.Scene {
 
                 platform.update();
             }
+
+            this.enemies.preUpdate();
         }
 
         else {
 
-            my.sprite.player.stop();
-            my.sprite.player.enable = false;
-
             if (this.rKey.isDown) {
-                this.scene.restart();
+
+                if (this.win) {
+                    this.scene.start("levelTwoScene");
+                    this.scene.restart();
+                } 
+                else {
+                    this.scene.restart();
+                }
             }
         }
     }

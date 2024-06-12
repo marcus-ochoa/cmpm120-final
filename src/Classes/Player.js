@@ -49,8 +49,6 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.DRAG = 2000;
         this.JUMP_VELOCITY = -800;
         this.PARTICLE_VELOCITY = 100;
-        this.SCALE = 0.5;
-        this.ZOOM_SCALE = 1.25;
 
         this.setCollideWorldBounds(true);
         this.setScale(1.5);
@@ -67,9 +65,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
     death() {
         this.visible = false;
+        this.velocity = 0;
         this.deathVfx.setPosition(this.x, this.y-50);
         this.deathVfx.start();
-        this.visible = false;
         this.walkingVfx.stop();     
     }
 
