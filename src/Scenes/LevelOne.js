@@ -45,6 +45,15 @@ class LevelOne extends Phaser.Scene {
         this.spikeLayer.setCollisionByProperty({collision: true});
         this.doorLayer.setCollisionByProperty({collision: true});
 
+        // set up Phaser-provided cursor key input
+        cursors = this.input.keyboard.createCursorKeys();
+        this.rKey = this.input.keyboard.addKey('R');
+
+        // player sprite setup
+        my.sprite.player = new Player(this, 100, 500, "characters_sheet", "playerRed_stand.png");
+        this.physics.world.enable(my.sprite.player, Phaser.Physics.Arcade.DYNAMIC_BODY);
+        my.sprite.player.init();
+
         // initializing coin group from tiled
         this.coins = this.map.createFromObjects("Objects", {
             name: "coin",
@@ -65,67 +74,57 @@ class LevelOne extends Phaser.Scene {
         this.keyGroup = this.add.group(this.keys);
         this.keyGroup.playAnimation("key_anim");
 
-        // initializing platform group from tiled
-        this.platforms = this.map.createFromObjects("Platforms", {
-            name: "platform",
-            key: "tilemap_sheet",
-            frame: 8,
-            classType: Phaser.Physics.Arcade.Image 
-        });
-        this.physics.world.enable(this.platforms, Phaser.Physics.Arcade.DYNAMIC_BODY);
-        this.platformGroup = this.add.group(this.platforms);
-        this.platformVelocity = 75;
-        Phaser.Actions.Call(this.platformGroup.getChildren(), function(sprite) {
-            sprite.setImmovable(true);
-            sprite.body.allowGravity = false;
-            sprite.setVelocityX(this.platformVelocity);
+        this.platforms = [];
+
+        for (let objLayer of this.map.getObjectLayerNames().filter(layer => layer.includes("platform"))) {
+
+            let partImages = this.map.createFromObjects(objLayer, {
+                name: "platform",
+                key: "tilemap_sheet",
+                frame: 8,
+                classType: Phaser.Physics.Arcade.Image
+            });
+
+            this.physics.world.enable(partImages, Phaser.Physics.Arcade.DYNAMIC_BODY);
+            this.physics.add.collider(my.sprite.player, partImages);
+
+            console.log("getting obj layer: " + objLayer);
             
-        }, this);
-        this.platformCounter = 0;
+            let distance = 0;
+            let vertical = false;
+
+            for (let prop of this.map.getObjectLayer(objLayer).properties) {
+
+                if (prop.name == "distance") {
+                    distance = prop.value;
+                }
+                
+                if (prop.name == "vertical") {
+                    vertical = prop.value;
+                }
+            }
+
+            this.platforms.push(new Platform(this, partImages, distance, vertical));
+        }
+
+        // this.physics.world.enable(this.platforms, Phaser.Physics.Arcade.DYNAMIC_BODY);
+        // this.platformGroup = this.add.group(this.platforms);
+        // this.platformVelocity = 75;
+        // Phaser.Actions.Call(this.platformGroup.getChildren(), function(sprite) {
+        //     sprite.setImmovable(true);
+        //     sprite.body.allowGravity = false;
+        //     sprite.setVelocityX(this.platformVelocity);
+            
+        // }, this);
+        // this.platformCounter = 0;
 
         this.animatedTiles.init(this.map);
 
-        // set up Phaser-provided cursor key input
-        cursors = this.input.keyboard.createCursorKeys();
-        this.rKey = this.input.keyboard.addKey('R');
-
-        // my.vfx.walkingVfx = scene.add.particles(0, 0, "kenny-particles", {
-        //     frame: ['circle_05.png'],
-        //     scale: {start: 0.03, end: 0.3},
-        //     lifespan: 350,
-        //     gravityY: -800,
-        //     frequency: 100,
-        //     alpha: {start: 1, end: 0.1}, 
-        // });
-        // my.vfx.walkingVfx.stop();
-
-        // my.vfx.deathVfx = scene.add.particles(0, 0, "kenny-particles", {
-        //     frame: ['trace_05.png', 'trace_04.png'],
-        //     scale: {start: 0.03, end: 0.5},
-        //     lifespan: 350,
-        //     gravityY: -1000,
-        //     alpha: {start: 1, end: 0.1}, 
-        // });
-        // my.vfx.deathVfx.stop();
-
-        // my.vfx.jumpVfx = scene.add.particles(0, 0, "kenny-particles", {
-        //     frame: ['circle_02.png'],
-        //     scale: {start: 0.03, end: 0.5},
-        //     maxAliveParticles: 1,
-        //     lifespan: 350,
-        //     alpha: {start: 1, end: 0.1},
-        //     duration: 10,
-        // });
-        // my.vfx.jumpVfx.stop();
-
-        // player sprite setup
-        my.sprite.player = new Player(this, 100, 500, "characters_sheet", "playerRed_stand.png");
-        this.physics.world.enable(my.sprite.player, Phaser.Physics.Arcade.DYNAMIC_BODY);
-        my.sprite.player.init();
+        
 
         // add colliders for level elements
         this.physics.add.collider(my.sprite.player, this.groundLayer);
-        this.physics.add.collider(my.sprite.player, this.platformGroup);
+        
 
         // add colliders for objects
         this.physics.add.overlap(my.sprite.player, this.coinGroup, (obj1, obj2) => {
@@ -203,15 +202,10 @@ class LevelOne extends Phaser.Scene {
 
             my.sprite.player.update();
 
-            // moving platforms
-            this.platformCounter++;
-            if (this.platformCounter > 800) {
-                this.platformVelocity *= -1;
-                this.platformCounter = 0;
+            for (let platform of this.platforms) {
+
+                platform.update();
             }
-            Phaser.Actions.Call(this.platformGroup.getChildren(), function(sprite) {
-                sprite.setVelocityX(this.platformVelocity);
-            }, this);
         }
 
         else {
