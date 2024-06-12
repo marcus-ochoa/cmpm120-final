@@ -93,7 +93,7 @@ class Title extends Phaser.Scene {
         this.add.text(my.sprite.player.x, my.sprite.player.y - 200, "Spikes are Ouch", {fontSize: '64px'}).setOrigin(0.5);
         this.add.text(my.sprite.player.x, my.sprite.player.y - 140, "CMPM 120 Game", {fontSize: '32px'}).setOrigin(0.5);
         this.add.text(my.sprite.player.x, my.sprite.player.y + 130, "Marcus Ochoa", {fontSize: '48px'}).setOrigin(0.5);
-        this.add.text(my.sprite.player.x, my.sprite.player.y + 270, "Move: Arrow Keys       Interact: Z", {fontSize: '36px'}).setOrigin(0.5);
+        this.add.text(my.sprite.player.x, my.sprite.player.y + 270, "Move: Arrow Keys  Interact: Z", {fontSize: '36px'}).setOrigin(0.5);
         this.add.text(my.sprite.player.x, my.sprite.player.y + 320, "Press [SPACE] to start", {fontSize: '30px'}).setOrigin(0.5);
     }
 
